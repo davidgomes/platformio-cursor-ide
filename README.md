@@ -1,4 +1,4 @@
-# PlatformIO IDE for VSCode
+# PlatformIO IDE for Cursor
 
 [PlatformIO](https://platformio.org): Your Gateway to Embedded Software Development Excellence.
 
