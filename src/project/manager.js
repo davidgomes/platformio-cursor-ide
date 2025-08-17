@@ -252,8 +252,6 @@ export default class ProjectManager {
     // so that the IntelliSense service using the clangd extension can work.
     const compileCommandsPath = path.join(projectDir, 'compile_commands.json');
     if (!fs.existsSync(compileCommandsPath)) {
-      const stateKey = `compileCommandsGenerated_${projectDir}`;
-
       vscode.window.showInformationMessage(
         'Generating compile_commands.json for C/C++ IntelliSense...'
       );
