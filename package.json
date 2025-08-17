@@ -1,7 +1,7 @@
 {
   "name": "platformio-ide",
-  "version": "3.3.4",
-  "publisher": "platformio",
+  "version": "3.3.5",
+  "publisher": "DavidGomes",
   "engines": {
     "vscode": "^1.65.0"
   },

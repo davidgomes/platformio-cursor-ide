@@ -259,6 +259,20 @@ export default class ProjectManager {
       extension.pioTerm.sendText(`cd "${projectDir}"`);
       extension.pioTerm.sendText('pio init --ide vscode');
       extension.pioTerm.sendText('pio run -t compiledb');
+
+      // Watch for the creation of `compile_commands.json`, and
+      // restart clangd when it appears.
+      const watcher = vscode.workspace.createFileSystemWatcher(
+        new vscode.RelativePattern(projectDir, 'compile_commands.json')
+      );
+
+      const disposable = watcher.onDidCreate(() => {
+        vscode.commands.executeCommand('clangd.restart').catch(() => {
+          // Silently ignore if clangd extension is not installed
+        });
+        disposable.dispose();
+        watcher.dispose();
+      });
     }
   }
 
