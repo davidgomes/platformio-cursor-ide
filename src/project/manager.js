@@ -107,22 +107,9 @@ export default class ProjectManager {
       vscode.workspace.onDidChangeWorkspaceFolders(() =>
         this.switchToProject(this.findActiveProjectDir()),
       ),
-      vscode.commands.registerCommand('platformio-ide.rebuildProjectIndex', async () => {
-        // Get the current project directory
-        const projectDir = this.findActiveProjectDir();
-        if (!projectDir) {
-          vscode.window.showErrorMessage('No PlatformIO project is currently open');
-          return;
-        }
-
-        // Run commands in the PIO terminal
-        extension.pioTerm.sendText(`cd "${projectDir}"`);
-        extension.pioTerm.sendText('pio init --ide vscode');
-        extension.pioTerm.sendText('pio run -t compiledb');
-        
-        // Also rebuild the index
-        return this._pool.getActiveObserver().rebuildIndex({ force: true });
-      }),
+      vscode.commands.registerCommand('platformio-ide.rebuildProjectIndex', () =>
+        this._pool.getActiveObserver().rebuildIndex({ force: true }),
+      ),
       vscode.commands.registerCommand('platformio-ide.refreshProjectTasks', () =>
         this._taskManager.refresh({ force: true }),
       ),
@@ -261,25 +248,19 @@ export default class ProjectManager {
     this.showSelectedEnv();
     this.saveActiveProjectState();
 
-    // Check if compile_commands.json exists, if not, generate it
+    // Generate a `compile_commands.json` in the project if it doesn't exist. This is
+    // so that the IntelliSense service using the clangd extension can work.
     const compileCommandsPath = path.join(projectDir, 'compile_commands.json');
     if (!fs.existsSync(compileCommandsPath)) {
-      // Check if we've already prompted for this project in this session
       const stateKey = `compileCommandsGenerated_${projectDir}`;
-      if (!extension.context.workspaceState.get(stateKey)) {
-        // Mark that we're generating for this project
-        extension.context.workspaceState.update(stateKey, true);
 
-        // Show a notification that we're generating compile_commands.json
-        vscode.window.showInformationMessage(
-          'Generating compile_commands.json for IntelliSense...'
-        );
+      vscode.window.showInformationMessage(
+        'Generating compile_commands.json for C/C++ IntelliSense...'
+      );
 
-        // Run the commands to generate compile_commands.json
-        extension.pioTerm.sendText(`cd "${projectDir}"`);
-        extension.pioTerm.sendText('pio init --ide vscode');
-        extension.pioTerm.sendText('pio run -t compiledb');
-      }
+      extension.pioTerm.sendText(`cd "${projectDir}"`);
+      extension.pioTerm.sendText('pio init --ide vscode');
+      extension.pioTerm.sendText('pio run -t compiledb');
     }
   }
 
