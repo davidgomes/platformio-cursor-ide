@@ -17,6 +17,7 @@ import { STATUS_BAR_PRIORITY_START } from '../constants';
 import { extension } from '../main';
 import path from 'path';
 import vscode from 'vscode';
+import fs from 'fs';
 
 export default class ProjectManager {
   CONFIG_CHANGED_DELAY = 3; // seconds
@@ -246,6 +247,33 @@ export default class ProjectManager {
 
     this.showSelectedEnv();
     this.saveActiveProjectState();
+
+    // Generate a `compile_commands.json` in the project if it doesn't exist. This is
+    // so that the IntelliSense service using the clangd extension can work.
+    const compileCommandsPath = path.join(projectDir, 'compile_commands.json');
+    if (!fs.existsSync(compileCommandsPath)) {
+      vscode.window.showInformationMessage(
+        'Generating compile_commands.json for C/C++ IntelliSense...'
+      );
+
+      extension.pioTerm.sendText(`cd "${projectDir}"`);
+      extension.pioTerm.sendText('pio init --ide vscode');
+      extension.pioTerm.sendText('pio run -t compiledb');
+
+      // Watch for the creation of `compile_commands.json`, and
+      // restart clangd when it appears.
+      const watcher = vscode.workspace.createFileSystemWatcher(
+        new vscode.RelativePattern(projectDir, 'compile_commands.json')
+      );
+
+      const disposable = watcher.onDidCreate(() => {
+        vscode.commands.executeCommand('clangd.restart').catch(() => {
+          // Silently ignore if clangd extension is not installed
+        });
+        disposable.dispose();
+        watcher.dispose();
+      });
+    }
   }
 
   registerEnvSwitcher() {

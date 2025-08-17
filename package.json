@@ -1,13 +1,13 @@
 {
   "name": "platformio-ide",
-  "version": "3.3.4",
-  "publisher": "platformio",
+  "version": "3.3.5",
+  "publisher": "DavidGomes",
   "engines": {
     "vscode": "^1.65.0"
   },
   "license": "Apache-2.0",
-  "displayName": "PlatformIO IDE",
-  "description": "Your Gateway to Embedded Software Development Excellence: CMSIS, ESP-IDF, FreeRTOS, libOpenCM3, mbed OS, SPL, STM32Cube, Zephyr RTOS, Arduino, ARM, AVR, Espressif (ESP8266/ESP32), FPGA, MCS-51 (8051), MSP430, Nordic (nRF51/nRF52), PIC32, RISC-V, Raspberry Pi (RP2040), STMicroelectronics (STM8/STM32), Teensy",
+  "displayName": "PlatformIO IDE for Cursor",
+  "description": "Your Gateway to Embedded Software Development Excellence: CMSIS, ESP-IDF, FreeRTOS, libOpenCM3, mbed OS, SPL, STM32Cube, Zephyr RTOS, Arduino, ARM, AVR, Espressif (ESP8266/ESP32), FPGA, MCS-51 (8051), MSP430, Nordic (nRF51/nRF52), PIC32, RISC-V, Raspberry Pi (RP2040), STMicroelectronics (STM8/STM32), Teensy. This extension has been adapted for Cursor.",
   "categories": [
     "Programming Languages",
     "Linters",
@@ -697,7 +697,8 @@
       }
     ],
     "configurationDefaults": {
-      "C_Cpp.debugShortcut": false
+      "C_Cpp.debugShortcut": false,
+      "C_Cpp.intelliSenseEngine": "Disabled"
     },
     "configuration": {
       "type": "object",
@@ -905,6 +906,6 @@
     "webpack-cli": "~6.0.1"
   },
   "extensionDependencies": [
-    "ms-vscode.cpptools"
+    "llvm-vs-code-extensions.vscode-clangd"
   ]
 }
